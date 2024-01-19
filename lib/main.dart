@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_started/home.dart';
 import 'package:toast/toast.dart';
 
-const user = 'pepito';
+
+const user = 'pepe';
 const pwd = '123';
 
 void main() {
@@ -49,6 +51,7 @@ class MyLoginPageState extends State<MyLoginPage> {
 
     userController = TextEditingController();
     passwordController = TextEditingController();
+
   }
 
   @override
@@ -56,45 +59,7 @@ class MyLoginPageState extends State<MyLoginPage> {
     ToastContext().init(context);
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Log In',
-                style: TextStyle(
-                    color: Colors.amber, fontSize: 50, fontFamily: 'bold')),
-            /* Image(image: ImageProvider), */
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                controller: userController,
-                decoration: const InputDecoration(labelText: 'User'),
-                maxLength: 25,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                maxLength: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: logIn, child: const Text('Iniciar Sesion')),
-            ElevatedButton(
-                onPressed: () {
-                  showToast('Salir');
-                },
-                child: const Text('Salir')),
-          ],
-        ),
-      ),
+      body: formLogIn()
     );
   }
 
@@ -104,7 +69,7 @@ class MyLoginPageState extends State<MyLoginPage> {
       message += '$message $data';
     }
     if (action == 'Salir') {
-      message = 'Saliendo';
+      message = 'Ha salido del sistema';
     }
 
     Toast.show(message, duration: Toast.lengthLong, gravity: Toast.bottom);
@@ -134,15 +99,118 @@ class MyLoginPageState extends State<MyLoginPage> {
     }
 
     if (!existUser()) {
-      showToast('action', '', 'Usuario no existe en el sistema');
+      showToast('action', '', 'Error en las credenciales de acceso');
     }
 
     if (existUser()) {
       showToast(
           'Iniciar Sesion',
           ' ${userController.text.trim()} pass: ${passwordController.text.trim()}',
-          'Iniciando Sesion Usuario:');
+          ' Acceso concedido');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Inicio(),)) ;
       clearTexts();
     }
+  }
+
+  Widget formLogIn(){
+    
+    return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Inicio sesion',
+                style: TextStyle(
+                    color: Colors.amber, fontSize: 50, fontFamily: 'bold')),
+            /* Image(image: ImageProvider), */
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                controller: userController,
+                decoration: const InputDecoration(labelText: 'User'),
+                maxLength: 25,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                controller: passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                maxLength: 20,
+                obscureText: true,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                onPressed: logIn, child: const Text('Iniciar Sesion')),
+            ElevatedButton(
+                onPressed: () {
+                  showToast('Salir');
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: const Text('Salir'))
+          ],
+        ),
+      );
+
+  }
+
+}
+
+
+class Inicio extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Inicio'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RecetaPage(),
+                    ));
+              },
+              child: const Text('Recetas'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ComidaPage(),
+                    ));
+                print('Comidas');
+              },
+              child: const Text('Comidas'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PlantaPage(),
+                    ));
+                print('Plantas');
+              },
+              child: const Text('Plantas'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
